@@ -48,7 +48,7 @@ with open('SolvableInput.csv', 'r') as f:
 
 #make edges NOTE: codes are connected to there orthgonal adjacent nodes ONLY
 for r in range(num_rows):
-    for c in (num_cols):
+    for c in range(num_cols):
         #For each square up and down, check if it exists, if so add
         # down check
         if  (r+1) < num_rows:
