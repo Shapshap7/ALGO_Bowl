@@ -1,4 +1,4 @@
-#INPUT:David
+#INPUT:William
 #Input: File with .,1,2,3,4,X
 #Output: A NetworkX grid with states of each cell contained within each node
 #Note:
@@ -24,6 +24,8 @@ for lines in file:
  else:
      type = black 
        MaxLight = int(each)
+    g.addnode((r,c), cell_type = Type, MaxAdj = MaxLight, CurLight = 0, isLit = false, hasLightBulb = false)
+    r++;
     """
 
 #ALGORITHM:Steve,Wiliam,David
@@ -54,4 +56,5 @@ def alg():
 #OUTPUT:Steve
 #Input: 2D grid with L inserted where .'s were
 #Output: .csv with original file with updated L cells.
-    # Ideas:
+    # Ideas: For the output we are going to create a .csv file as the optimal solution 
+    # where our NetworkX graph will 
