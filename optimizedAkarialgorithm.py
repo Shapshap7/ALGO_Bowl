@@ -33,6 +33,11 @@ for lines in file:
 #Output: new NetworkX grid with L inserted where . should have been
     # Ideas:
 def alg():
+    g = [['.','.','X','.'],
+         ['.','.','.','.'],
+         ['.','0','X','.'],
+         ['.','.','.','.']]
+    return g
     """if square empty:
     check adjacents for # squares
     for each number square adjacent:
@@ -58,3 +63,10 @@ def alg():
 #Output: .csv with original file with updated L cells.
     # Ideas: For the output we are going to create a .csv file as the optimal solution 
     # where our NetworkX graph will 
+
+def main():
+    returnedGraph = alg()   
+    return returnedGraph
+
+if __name__ == "__main__":
+    main()
