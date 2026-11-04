@@ -64,7 +64,9 @@ def input():
             #left check
             if (c-1) >= 0: 
                 G.add_edge((r,c),(r,c-1))
-    return graph
+
+    graphs = (graph, G)
+    return graphs
 
 
 def main():

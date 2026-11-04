@@ -1,4 +1,5 @@
 import csv
+import networkx as nx
 import optimizedAkarialgorithm
 
 inputGrapharray = optimizedAkarialgorithm.main()

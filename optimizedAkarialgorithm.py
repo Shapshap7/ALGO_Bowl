@@ -7,6 +7,9 @@
     # The less number of groups that get that solution the more points you get.
 # Ideas:
 
+import networkx as nx
+import inputGenerator
+
 def input():
     """
     Size =  line1.split
@@ -32,12 +35,28 @@ for lines in file:
 #Input: NetworkX Grid
 #Output: new NetworkX grid with L inserted where . should have been
     # Ideas:
-def alg():
-    g = [['.','.','X','.'],
-         ['.','.','.','.'],
-         ['.','0','X','.'],
-         ['.','.','.','.']]
-    return g
+def alg(graphs):
+    # g = [['.','.','X','.'],
+    #      ['.','.','.','.'],
+    #      ['.','0','X','.'],
+    #      ['.','.','.','.']]
+
+    graph2D = graphs[0]
+    graphNX = graphs[1]
+
+    for node in graphNX.nodes: 
+        for neighbor in graphNX.neighbors(node):
+            neighbor["isLit"] = True
+            row = neighbor[0]
+            col = neighbor[1]
+            graph2D[row][col] = "L"
+
+
+
+    # for i in range(len()):
+
+    
+    return graph2D
     """if square empty:
     check adjacents for # squares
     for each number square adjacent:
@@ -65,7 +84,8 @@ def alg():
     # where our NetworkX graph will 
 
 def main():
-    returnedGraph = alg()   
+    graph1 = inputGenerator.main()
+    returnedGraph = alg(graph1)   
     return returnedGraph
 
 if __name__ == "__main__":
