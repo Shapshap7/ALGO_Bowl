@@ -45,11 +45,33 @@ def alg(graphs):
     graphNX = graphs[1]
 
     for node in graphNX.nodes: 
-        for neighbor in graphNX.neighbors(node):
-            neighbor["isLit"] = True
-            row = neighbor[0]
-            col = neighbor[1]
-            graph2D[row][col] = "L"
+        # checkes the current node and sees if it can place a bulb there
+        if (graphNX.nodes[node]["cellType"] == "white" and 
+            graphNX.nodes[node]["isLit"] == False and 
+            graphNX.nodes[node]["hasBulb"] == False):
+
+            for neighbor in graphNX.neighbors(node):
+                if (graphNX.nodes[neighbor]["cellType"] == "#black"):
+                    if (graphNX.nodes[neighbor]["MaxAdj"] > graphNX.nodes[neighbor]["curAdj"]):
+                        graphNX.nodes[neighbor]["curAdj"] += 1 
+                        graphNX.nodes[node]["hasBulb"] = True
+                        row = node[0]
+                        col = node[1]
+                        graph2D[row][col] = "L"
+                    
+                    if (graphNX.nodes[neighbor]["MaxAdj"] == 0):
+                        graphNX.nodes[node]["hasBulb"] = False
+                        row = node[0]
+                        col = node[1]
+                        graph2D[row][col] = "."
+                        break
+
+
+
+                if (graphNX.nodes[neighbor]["cellType"] == "white"):
+                    graphNX.nodes[neighbor]["isLit"] = True
+                    
+                    
 
 
 
