@@ -65,11 +65,6 @@ def alg(graphs):
                         col = node[1]
                         graph2D[row][col] = "."
                         break
-
-
-
-                if (graphNX.nodes[neighbor]["cellType"] == "white"):
-                    graphNX.nodes[neighbor]["isLit"] = True
                     
                     
 

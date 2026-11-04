@@ -9,7 +9,7 @@ import csv
 
 #read and open the file
 def input(): 
-    with open('SolvableInput.csv', 'r') as f:
+    with open('input_group1293.csv', 'r') as f:
         reader = csv.reader(f)
         #data = list(reader)
 
