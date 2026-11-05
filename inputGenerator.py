@@ -1,143 +1,39 @@
-# Akari Input Generation .
-# Authors: Steve Dimas, William Shappley, David Baloyi
-# Date: 11/1/2026
-
-
+"""Read an AlgoBOWL Akari instance into a 2D grid and a NetworkX graph."""
 import networkx as nx
-import csv
 
 
-#read and open the file
-def input(): 
-    with open('input_group1293.txt', 'r') as f:
+def input(path="input_group1293.txt"):
+    with open(path, encoding="utf-8") as f:
+        rows, cols = map(int, f.readline().split())
+        board = [list(f.readline().rstrip("\r\n")) for _ in range(rows)]
 
-        #data = list(reader)
+    if len(board) != rows or any(len(row) != cols for row in board):
+        raise ValueError("Input dimensions don't match the first line")
+    if any(ch not in ".X01234" for row in board for ch in row):
+        raise ValueError("Input contains an invalid character")
 
-        #get rows and columns from the first line of the csv file
-        G = nx.Graph()
-        graph = []
-        size = f.readline().split()
-        num_rows = int(size[0])
-        num_cols = int(size[1])
-
-        #read and create nodes 
-        r = 0
-        for line in f:
-            line = line.strip()
-            #make a row for the 2D Array to have
-            graph_rows = []
-            for c in range(num_cols):
-                value = line[c]
-                graph_rows.append(value)
-                #check if the square is a blank, black square
-                if value == "X":
-                    Type = "black"
-                    Adj = None
-                #check if the value is a white space 
-                elif value == ".":
-                    Type = "white"
-                    Adj = None
-                #if neither of those we know it's a # square 
-                else:
-                    Type = "#black"
-                    Adj = int(value)
-                #now we can add the node. 
-                # NOTE: we can already assume the values for the res of the variables per node before traversal 
-                G.add_node((r,c), cellType = Type, MaxAdj = Adj, curAdj = 0, isLit = False, hasBulb = False)
-            r += 1
-            #add the row to the total graph array
-            graph.append(graph_rows)
-
-    #make edges NOTE: codes are connected to there orthgonal adjacent nodes ONLY
-    for r in range(num_rows):
-        for c in range(num_cols):
-            #For each square up and down, check if it exists, if so add
-            # down check
-            if  (r+1) < num_rows:
-                G.add_edge((r,c),(r+1,c))
-            #up check
-            if (r-1) >= 0: 
-                G.add_edge((r,c),(r-1,c))
-            #For each square left and right, check if it exits, if so add 
-            # right check
-            if  (c+1) < num_cols:
-                G.add_edge((r,c),(r,c+1))
-            #left check
-            if (c-1) >= 0: 
-                G.add_edge((r,c),(r,c-1))
-
-    graphs = (graph, G)
-    return graphs
+    graph = nx.Graph()
+    for r in range(rows):
+        for c in range(cols):
+            value = board[r][c]
+            cell_type = "white" if value == "." else ("black" if value == "X" else "#black")
+            graph.add_node(
+                (r, c), cellType=cell_type,
+                MaxAdj=int(value) if value in "01234" else None,
+                curAdj=0, isLit=False, hasBulb=False
+            )
+            # Add each undirected edge only once.
+            if r > 0:
+                graph.add_edge((r, c), (r - 1, c))
+            if c > 0:
+                graph.add_edge((r, c), (r, c - 1))
+    return board, graph
 
 
-def main():
-    processedFile = input()
-    return processedFile
+def main(path="input_group1293.txt"):
+    return input(path)
+
 
 if __name__ == "__main__":
-    main()
-
-
-
-
-
-#OLD CSV INPUT
-def CSVinput(): 
-    with open('input_group1293.csv', 'r') as f:
-        reader = csv.reader(f)
-        #data = list(reader)
-
-        #get rows and columns from the first line of the csv file
-        G = nx.Graph()
-        graph = []
-        size = next(reader)
-        num_rows = int(size[0])
-        num_cols = int(size[1])
-
-        #read and create nodes 
-        r = 0
-        for line in reader:
-            #make a row for the 2D Array to have
-            graph_rows = []
-            for c in range(num_cols):
-                value = line[c]
-                graph_rows.append(value)
-                #check if the square is a blank, black square
-                if value == "X":
-                    Type = "black"
-                    Adj = None
-                #check if the value is a white space 
-                elif value == ".":
-                    Type = "white"
-                    Adj = None
-                #if neither of those we know it's a # square 
-                else:
-                    Type = "#black"
-                    Adj = int(value)
-                #now we can add the node. 
-                # NOTE: we can already assume the values for the res of the variables per node before traversal 
-                G.add_node((r,c), cellType = Type, MaxAdj = Adj, curAdj = 0, isLit = False, hasBulb = False)
-            r += 1
-            #add the row to the total graph array
-            graph.append(graph_rows)
-
-    #make edges NOTE: codes are connected to there orthgonal adjacent nodes ONLY
-    for r in range(num_rows):
-        for c in range(num_cols):
-            #For each square up and down, check if it exists, if so add
-            # down check
-            if  (r+1) < num_rows:
-                G.add_edge((r,c),(r+1,c))
-            #up check
-            if (r-1) >= 0: 
-                G.add_edge((r,c),(r-1,c))
-            #For each square left and right, check if it exits, if so add 
-            # right check
-            if  (c+1) < num_cols:
-                G.add_edge((r,c),(r,c+1))
-            #left check
-            if (c-1) >= 0: 
-                G.add_edge((r,c),(r,c-1))
-
-    graphs = (graph, G)
-    return graphs
+    board, graph = main()
+    print(f"Loaded {len(board)} x {len(board[0])} board with {graph.number_of_nodes()} nodes")
