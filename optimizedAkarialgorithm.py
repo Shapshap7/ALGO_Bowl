@@ -44,7 +44,7 @@ def helperRec(row,col,dRow,dCol,maxRow,maxCol,NXGraph):
     # Base Case1
     if(row < 0 or col < 0):
         return False
-    if(row>maxRow or col>maxCol):
+    if(row>=maxRow or col>=maxCol):
         return False
     # Base case 2
     if(NXGraph.nodes[(row,col)]["cellType"] != "white"):
@@ -108,37 +108,66 @@ def alg(graphs):
     for nodeKey in graphNX.nodes:
         currNode = graphNX.nodes[nodeKey]
         
-        if (currNode["cellType"] == "#black"):
+        if (currNode["cellType"] == "#black" and currNode["MaxAdj"] is not None):
+            actual_bulbs = sum(1 for neighbor in graphNX.neighbors(nodeKey) if graphNX.nodes[neighbor]["hasBulb"])
             #check curAdj >= MaxAdj
-            if(currNode["curAdj"] == currNode["MaxAdj"]):
-                continue
-            if(currNode["curAdj"] != currNode["MaxAdj"]):
+            if(actual_bulbs != currNode["MaxAdj"]):
                 #We have a violation
-                currViolations += 1
+                currViolations += abs(actual_bulbs - currNode["MaxAdj"])
         if (currNode["hasBulb"] == True):
             currNoderow = nodeKey[0]
             currNodecol = nodeKey[1]
             # Go all the way North
 
-            if(helperRec(currNoderow,currNodecol,-1,0,maxSizerow,maxSizecol,graphNX)):
-                currViolations+=1
+            #if(helperRec(currNoderow,currNodecol,-1,0,maxSizerow,maxSizecol,graphNX)):
+             #   currViolations+=1
 
             # Go all the way South
 
-            if(helperRec(currNoderow,currNodecol,+1,0,maxSizerow,maxSizecol,graphNX)):
+            if(helperRec(currNoderow+1,currNodecol,+1,0,maxSizerow,maxSizecol,graphNX)):
                 currViolations+=1
             # Go East
 
-            if(helperRec(currNoderow,currNodecol,0,1,maxSizerow,maxSizecol,graphNX)):
+            if(helperRec(currNoderow,currNodecol+1,0,1,maxSizerow,maxSizecol,graphNX)):
                 currViolations+=1
 
             # Go west
 
-            if(helperRec(currNoderow,currNodecol,0,-1,maxSizerow,maxSizecol,graphNX)):
-                currViolations+=1
+           # if(helperRec(currNoderow,currNodecol,0,-1,maxSizerow,maxSizecol,graphNX)):
+           #     currViolations+=1
 
+    illuminated_cells = set()
 
+    # Step 1: Cast rays from all bulbs
+    for nodeKey in graphNX.nodes:
+        if graphNX.nodes[nodeKey].get("hasBulb") == True:
+            r, c = nodeKey
+            illuminated_cells.add((r, c))  # The bulb's own cell is illuminated
 
+            # Cast light rays in all 4 directions
+            for dRow, dCol in [(-1, 0), (1, 0), (0, 1), (0, -1)]:
+                curr_r, curr_c = r + dRow, c + dCol
+
+                # Travel in a straight line until hitting a wall/number or grid edge
+                while 0 <= curr_r < maxSizerow and 0 <= curr_c < maxSizecol:
+                    target_node = graphNX.nodes[(curr_r, curr_c)]
+                    
+                    # STOP only if hitting a black wall or number block
+                    if target_node.get("cellType") == "#black":
+                        break
+
+                    # Add cell to illuminated set (includes empty white cells and other bulbs)
+                    illuminated_cells.add((curr_r, curr_c))
+                    curr_r += dRow
+                    curr_c += dCol
+
+    # Step 2: Count how many white cells remain unlit
+    for nodeKey in graphNX.nodes:
+        node = graphNX.nodes[nodeKey]
+        # Check all white cells (both empty and bulb-bearing)
+        if node.get("cellType") == "white":
+            if nodeKey not in illuminated_cells:
+                currViolations += 1
 
     print(currViolations)
     

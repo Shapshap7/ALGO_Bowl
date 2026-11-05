@@ -71,7 +71,7 @@ def input():
 
 
 def main():
-    processedFile = input()
+    processedFile = CSVinput()
     return processedFile
 
 if __name__ == "__main__":
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
 #OLD CSV INPUT
 def CSVinput(): 
-    with open('input_group1293.csv', 'r') as f:
+    with open('SolvableInput.csv', 'r') as f:
         reader = csv.reader(f)
         #data = list(reader)
 
