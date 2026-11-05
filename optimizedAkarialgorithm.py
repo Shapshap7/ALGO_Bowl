@@ -35,14 +35,42 @@ for lines in file:
 #Input: NetworkX Grid
 #Output: new NetworkX grid with L inserted where . should have been
     # Ideas:
+
+
+    # key: (r,c) 
+    # recFunction (r-1,c) hey call node key (r-1,c) recFunction ((r-1)-1,c): base case: if graph has node, else return.
+    # SecBasecase: if node["is an X or blockNum"], thirdBaseCase: if node["isbulb"] == true, remove
+def helperRec(row,col,dRow,dCol,maxRow,maxCol,NXGraph):
+    # Base Case1
+    if(row < 0 or col < 0):
+        return False
+    if(row>maxRow or col>maxCol):
+        return False
+    # Base case 2
+    if(NXGraph.nodes[(row,col)]["cellType"] != "white"):
+        return False
+    # bas3e case 3
+    if(NXGraph.nodes[(row,col)]["hasBulb"] == True):
+        return True
+
+    # recursive()
+    result = helperRec(row+dRow,col+dCol,dRow,dCol,maxRow,maxCol,NXGraph)
+
+    return result
+
+
+
+
 def alg(graphs):
-    # g = [['.','.','X','.'],
-    #      ['.','.','.','.'],
-    #      ['.','0','X','.'],
-    #      ['.','.','.','.']]
+    # g = [['B','B','X','.'],
+    #      ['.','B','B','.'],
+    #      ['B','0','X','.'],
+    #      ['B','.','.','.']]
 
     graph2D = graphs[0]
     graphNX = graphs[1]
+    maxSizerow = len(graph2D)
+    maxSizecol = len(graph2D[0])
 
     for node in graphNX.nodes: 
         # checkes the current node and sees if it can place a bulb there
@@ -76,10 +104,43 @@ def alg(graphs):
         block we will remove curAdj - MaxAdj bulbs from the neighbors and set them hasBulb = False. Update 
         curAdj as well.
     '''
-    for currNode in graphNX.nodes:
+    currViolations = 0
+    for nodeKey in graphNX.nodes:
+        currNode = graphNX.nodes[nodeKey]
+        
+        if (currNode["cellType"] == "#black"):
+            #check curAdj >= MaxAdj
+            if(currNode["curAdj"] == currNode["MaxAdj"]):
+                continue
+            if(currNode["curAdj"] != currNode["MaxAdj"]):
+                #We have a violation
+                currViolations += 1
+        if (currNode["hasBulb"] == True):
+            currNoderow = nodeKey[0]
+            currNodecol = nodeKey[1]
+            # Go all the way North
 
-    # for i in range(len()):
+            if(helperRec(currNoderow,currNodecol,-1,0,maxSizerow,maxSizecol,graphNX)):
+                currViolations+=1
 
+            # Go all the way South
+
+            if(helperRec(currNoderow,currNodecol,+1,0,maxSizerow,maxSizecol,graphNX)):
+                currViolations+=1
+            # Go East
+
+            if(helperRec(currNoderow,currNodecol,0,1,maxSizerow,maxSizecol,graphNX)):
+                currViolations+=1
+
+            # Go west
+
+            if(helperRec(currNoderow,currNodecol,0,-1,maxSizerow,maxSizecol,graphNX)):
+                currViolations+=1
+
+
+
+
+    print(currViolations)
     
     return graph2D
     """if square empty:
