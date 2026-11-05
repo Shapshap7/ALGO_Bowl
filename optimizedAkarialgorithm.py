@@ -68,7 +68,15 @@ def alg(graphs):
                     
                     
 
-
+    '''
+    To find a violation:
+        We'll loop over every square number block and check its adjacent neighboring nodes.
+        We'll make sure that the number of bulbs neighboring the number block is less than or equal
+        to the MaxAdj number. If this is false, for example we have too many bulbs adjacent to the number
+        block we will remove curAdj - MaxAdj bulbs from the neighbors and set them hasBulb = False. Update 
+        curAdj as well.
+    '''
+    for currNode in graphNX.nodes:
 
     # for i in range(len()):
 
