@@ -3,9 +3,10 @@ import networkx as nx
 import optimizedAkarialgorithm
 
 inputGrapharray = optimizedAkarialgorithm.main()
-with open("output.txt",'w') as out:
-    
-    for row in inputGrapharray:
+violations = str(inputGrapharray[0])
+graph = inputGrapharray[1]
+with open("output.txt", 'w') as out:
+    out.write(violations + '\n')
+    for row in graph:
         stringLine = ''.join(row) + '\n'
         out.write(stringLine)
-

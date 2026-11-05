@@ -163,7 +163,7 @@ def alg(graphs):
     print("Violations:", currViolations)
     print("Unlit cells:", unlitCells)
 
-    return graph2D
+    return (currViolations,graph2D)
     """if square empty:
     check adjacents for # squares
     for each number square adjacent:
