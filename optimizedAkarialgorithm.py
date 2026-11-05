@@ -113,28 +113,16 @@ def alg(graphs):
             #check curAdj >= MaxAdj
             if(actual_bulbs != currNode["MaxAdj"]):
                 #We have a violation
-                currViolations += abs(actual_bulbs - currNode["MaxAdj"])
+                currViolations += 1
         if (currNode["hasBulb"] == True):
             currNoderow = nodeKey[0]
             currNodecol = nodeKey[1]
             # Go all the way North
-
-            #if(helperRec(currNoderow,currNodecol,-1,0,maxSizerow,maxSizecol,graphNX)):
-             #   currViolations+=1
-
-            # Go all the way South
-
-            if(helperRec(currNoderow+1,currNodecol,+1,0,maxSizerow,maxSizecol,graphNX)):
-                currViolations+=1
-            # Go East
-
-            if(helperRec(currNoderow,currNodecol+1,0,1,maxSizerow,maxSizecol,graphNX)):
-                currViolations+=1
-
-            # Go west
-
-           # if(helperRec(currNoderow,currNodecol,0,-1,maxSizerow,maxSizecol,graphNX)):
-           #     currViolations+=1
+            if (helperRec(currNoderow-1, currNodecol, -1, 0, maxSizerow, maxSizecol, graphNX) or
+                helperRec(currNoderow+1, currNodecol, 1, 0, maxSizerow, maxSizecol, graphNX) or
+                helperRec(currNoderow, currNodecol-1, 0, -1, maxSizerow, maxSizecol, graphNX) or
+                helperRec(currNoderow, currNodecol+1, 0, 1, maxSizerow, maxSizecol, graphNX)):
+                currViolations += 1
 
     illuminated_cells = set()
 
@@ -153,7 +141,7 @@ def alg(graphs):
                     target_node = graphNX.nodes[(curr_r, curr_c)]
                     
                     # STOP only if hitting a black wall or number block
-                    if target_node.get("cellType") == "#black":
+                    if target_node.get("cellType") != "white":
                         break
 
                     # Add cell to illuminated set (includes empty white cells and other bulbs)
@@ -162,15 +150,19 @@ def alg(graphs):
                     curr_c += dCol
 
     # Step 2: Count how many white cells remain unlit
+    # Step 2: Count how many white cells remain unlit
+    unlitCells = 0
+
     for nodeKey in graphNX.nodes:
         node = graphNX.nodes[nodeKey]
-        # Check all white cells (both empty and bulb-bearing)
+
         if node.get("cellType") == "white":
             if nodeKey not in illuminated_cells:
-                currViolations += 1
+                unlitCells += 1
 
-    print(currViolations)
-    
+    print("Violations:", currViolations)
+    print("Unlit cells:", unlitCells)
+
     return graph2D
     """if square empty:
     check adjacents for # squares
